@@ -44,6 +44,8 @@ func (a *APIv1) Route(router *httprouter.Router) {
 	router.GET(prefix+"printers/:id", a.getPrinter)
 	router.GET(prefix+"printers/:id/snapshot.png", a.getPrinterSnapshot)
 	router.GET(prefix+"printers/:id/current_job", a.getPrinterCurrentJob)
+	router.POST(prefix+"printers/:id/current_job/suspend", a.postPrinterCurrentJobSuspend)
+	router.POST(prefix+"printers/:id/current_job/resume", a.postPrinterCurrentJobResume)
 	router.DELETE(prefix+"printers/:id/current_job", a.deletePrinterCurrentJob)
 	router.POST(prefix+"printers/:id/prints", a.postPrinterPrints)
 	router.POST(prefix+"printers/:id/unload_filament/:tool_index", a.postPrinterUnloadFilament)
@@ -120,6 +122,46 @@ func (a *APIv1) getPrinterCurrentJob(w http.ResponseWriter, r *http.Request, par
 
 	enc := json.NewEncoder(w)
 	enc.Encode(apiSuccess(printer.connection.Printer.Metadata.CurrentProcess))
+}
+
+func (a *APIv1) postPrinterCurrentJobSuspend(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
+	if !ok {
+		a.notFound(w, r)
+		return
+	}
+
+	enc := json.NewEncoder(w)
+
+	_, err := printer.connection.Suspend()
+	if err != nil {
+		enc.Encode(apiError(err))
+		return
+	}
+
+	enc.Encode(apiSuccess(true))
+}
+
+func (a *APIv1) postPrinterCurrentJobResume(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
+	if !ok {
+		a.notFound(w, r)
+		return
+	}
+
+	enc := json.NewEncoder(w)
+
+	_, err := printer.connection.Resume()
+	if err != nil {
+		enc.Encode(apiError(err))
+		return
+	}
+
+	enc.Encode(apiSuccess(true))
 }
 
 func (a *APIv1) deletePrinterCurrentJob(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
