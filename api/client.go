@@ -182,6 +182,30 @@ func (c *Client) GetCurrentJob(id string) (*makerbot.PrinterProcess, error) {
 	return &job, nil
 }
 
+// SuspendCurrentJob tells makerbotd to suspend the current job on a specified printer
+func (c *Client) SuspendCurrentJob(printerID string) (*bool, error) {
+	var result bool
+
+	err := c.httpPost("/api/v1/printers/"+printerID+"/current_job/suspend", &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// ResumeCurrentJob tells makerbotd to resume the current job on a specified printer
+func (c *Client) ResumeCurrentJob(printerID string) (*bool, error) {
+	var result bool
+
+	err := c.httpPost("/api/v1/printers/"+printerID+"/current_job/resume", &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
 // CancelCurrentJob tells makerbotd to cancel the current job on a specified printer
 func (c *Client) CancelCurrentJob(printerID string) (*bool, error) {
 	var result bool
