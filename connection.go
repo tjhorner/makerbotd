@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/tjhorner/makerbot-rpc"
 )
@@ -26,6 +27,21 @@ func (pcs *printerConnections) ConnectedPrinters() *[]makerbot.Printer {
 	}
 
 	return &printers
+}
+
+func (pcs *printerConnections) Find(q string) (conn *printerConnection, ok bool) {
+	ok = false
+
+	for _, c := range *pcs {
+		if !c.Connected || !(c.connection.Printer.Serial == q || strings.EqualFold(c.connection.Printer.MachineName, q)) {
+			continue
+		}
+
+		conn = c
+		ok = true
+	}
+
+	return conn, ok
 }
 
 func (pcs *printerConnections) BySerial(serial string) (conn *printerConnection, ok bool) {

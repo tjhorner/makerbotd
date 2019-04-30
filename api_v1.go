@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -76,7 +75,7 @@ func (a *APIv1) getPrinters(w http.ResponseWriter, _ *http.Request, _ httprouter
 func (a *APIv1) getPrinter(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return
@@ -89,7 +88,7 @@ func (a *APIv1) getPrinter(w http.ResponseWriter, r *http.Request, params httpro
 func (a *APIv1) getPrinterSnapshot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return
@@ -108,7 +107,7 @@ func (a *APIv1) getPrinterSnapshot(w http.ResponseWriter, r *http.Request, param
 func (a *APIv1) getPrinterCurrentJob(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return
@@ -126,7 +125,7 @@ func (a *APIv1) getPrinterCurrentJob(w http.ResponseWriter, r *http.Request, par
 func (a *APIv1) deletePrinterCurrentJob(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return
@@ -146,7 +145,7 @@ func (a *APIv1) deletePrinterCurrentJob(w http.ResponseWriter, r *http.Request, 
 func (a *APIv1) postPrinterPrints(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return
@@ -161,15 +160,9 @@ func (a *APIv1) postPrinterPrints(w http.ResponseWriter, r *http.Request, params
 	}
 	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		a.internalError(w, r)
-		return
-	}
-
 	enc := json.NewEncoder(w)
 
-	err = printer.connection.Print(meta.Filename, data)
+	err = printer.connection.Print(meta.Filename, file, int(meta.Size))
 	if err != nil {
 		enc.Encode(apiError(err))
 		return
@@ -181,7 +174,7 @@ func (a *APIv1) postPrinterPrints(w http.ResponseWriter, r *http.Request, params
 func (a *APIv1) postPrinterUnloadFilament(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return
@@ -207,7 +200,7 @@ func (a *APIv1) postPrinterUnloadFilament(w http.ResponseWriter, r *http.Request
 func (a *APIv1) postPrinterLoadFilament(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	printer, ok := a.context.Printers.BySerial(params.ByName("id"))
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
 	if !ok {
 		a.notFound(w, r)
 		return

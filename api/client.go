@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -35,8 +34,6 @@ func (c *Client) request(req *http.Request, result interface{}) error {
 		return err
 	}
 	defer res.Body.Close()
-
-	log.Printf("%+v\n", *res)
 
 	dec := json.NewDecoder(res.Body)
 
@@ -171,6 +168,18 @@ func (c *Client) Print(id, path string) (*bool, error) {
 	}
 
 	return &result, nil
+}
+
+// GetCurrentJob gets a current job yeet
+func (c *Client) GetCurrentJob(id string) (*makerbot.PrinterProcess, error) {
+	var job makerbot.PrinterProcess
+
+	err := c.httpGet("/api/v1/printers/"+id+"/current_job", &job)
+	if err != nil {
+		return nil, err
+	}
+
+	return &job, nil
 }
 
 // CancelCurrentJob tells makerbotd to cancel the current job on a specified printer
