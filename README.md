@@ -43,6 +43,8 @@ Grab a snapshot from the printer's camera with `GET /api/v1/printers/23C100053C7
 
 ![](https://user-images.githubusercontent.com/2646487/57029732-71b08a00-6bf7-11e9-90ad-3f3339c0d181.png)
 
+You can do even more: suspend/resume print jobs, get the current state (progress, step, time left) of a print, cancel a print entirely...
+
 ## Setup
 
 Since makerbotd is a daemon, it expects to be run as a background process. If you use systemd, you can install the `makerbotd` service with `make install-systemd` (may need sudo). This command will:
