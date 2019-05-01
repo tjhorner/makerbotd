@@ -28,10 +28,16 @@ func (ctx *mbContext) Debugf(fmt string, v ...interface{}) {
 }
 
 func main() {
-	usr, _ := user.Current()
-	homedir := usr.HomeDir
+	var defaultConfig string
 
-	confPath := flag.String("config", homedir+"/.makerbotd/config.json", "the path to the makerbotd config file")
+	usr, err := user.Current()
+	if err != nil {
+		defaultConfig = "/etc/makerbotd/config.json"
+	} else {
+		defaultConfig = usr.HomeDir + "/.makerbotd/config.json"
+	}
+
+	confPath := flag.String("config", defaultConfig, "the path to the makerbotd config file")
 	forceListen := flag.Bool("force-listen", false, "force listen on unix socket if it is in use")
 	flag.Parse()
 

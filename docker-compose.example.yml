@@ -1,0 +1,9 @@
+version: "3"
+services:
+  makerbotd:
+    build: .
+    command: makerbotd --config /config.json
+    ports:
+      - "6969:6969"
+    volumes:
+      - "./config.json:/config.json"

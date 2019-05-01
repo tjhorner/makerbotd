@@ -47,6 +47,8 @@ You can do even more: suspend/resume print jobs, get the current state (progress
 
 ## Setup
 
+### Systemd
+
 Since makerbotd is a daemon, it expects to be run as a background process. If you use systemd, you can install the `makerbotd` service with `make install-systemd` (may need sudo). This command will:
 
 - Build `makerbotd`
@@ -56,6 +58,10 @@ Since makerbotd is a daemon, it expects to be run as a background process. If yo
 It will not enable or start makerbotd after you run this command. You should run `systemctl enable makerbotd` or `systemctl start makerbotd` after this if you wish.
 
 After `makerbotd` starts for the first time, it will create a config file in the directory specified. With the sample `makerbotd.service` in this directory, it will create it at `/etc/makerbotd/config.json`. You should edit this config file to suit your needs and then `systemctl restart makerbotd`. (Reloading is not supported yet.)
+
+### Docker
+
+You may also use Docker to run makerbotd. A `Dockerfile` and sample `docker-compose.yml` file is included in the root of this repository. Pay particular attention to the `volumes` in the `docker-compose.yml` file, as you will need to change it so that it points to your config.
 
 ## Configuration
 

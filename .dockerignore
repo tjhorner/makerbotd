@@ -1,0 +1,6 @@
+api/
+docker-compose.yml
+Dockerfile
+Makefile
+makerbotd.service
+README.md
