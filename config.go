@@ -13,10 +13,10 @@ const (
 )
 
 type printerConfig struct {
-	ConnectionType string
-	ID             string
-	IP             string
-	Port           string
+	ConnectionType string // ConnectionType should be either "local" or "remote". "local" = direct connect via IP, "remote" = remotely connect via MakerBot Reflector service.
+	ID             string // ID should be provided if the connection type is "remote". This is the ID of the printer as returned by MakerBot Reflector. It is usually the serial number.
+	IP             string // IP should be provided if the connection type is "local"
+	Port           string // Port should be provided if the connection type is "port"
 }
 
 type config struct {
@@ -27,7 +27,7 @@ type config struct {
 	ListenSocketPath    string          // ListenSocketPath defines the unix domain socket to listen on if ListenSocket is true
 	ListenTCP           bool            // ListenTCP defines whether or not makerbotd will listen on a TCP port
 	ListenTCPAddress    string          // ListenTCPPort defines the TCP port to listen on if ListenTCP is true
-	AutoAddPrinters     bool            // AutoAddPrinters defines whether or not printers should automatically be added from the authenticated Thingiverse account
+	AutoAddPrinters     bool            // AutoAddPrinters defines whether or not printers should automatically be added from the authenticated Thingiverse account (DOES NOTHING RIGHT NOW)
 	Printers            []printerConfig // Printers is the list of MakerBot printers that will automatically be connected when makerbotd starts
 }
 

@@ -1,0 +1,12 @@
+[Unit]
+Description=makerbotd
+After=network.target
+
+[Service]
+# Switch the path below to where your makerbotd binary is
+ExecStart=/usr/local/bin/makerbotd --config /etc/makerbotd/config.json
+Type=simple
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

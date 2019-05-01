@@ -4,6 +4,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// API represents an API (yep)
 type API interface {
 	Route(router *httprouter.Router)
 }
