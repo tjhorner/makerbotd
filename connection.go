@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/tjhorner/makerbot-rpc"
 )
@@ -64,20 +65,23 @@ func newPrinterConnection(context *mbContext, conf printerConfig) *printerConnec
 }
 
 func (pc *printerConnection) handleDisconnect() {
-	pc.context.Debugln("printerConnection: disconnected! attempting reconnect...")
+	pc.context.Debugf("printerConnection: disconnected (%s)! attempting reconnect in 10s...\n", pc.connection.Printer.MachineName)
 	pc.Connected = false
 	pc.connection = nil
 
+	time.Sleep(10 * time.Second)
 	pc.Connect()
 }
 
 func (pc *printerConnection) connectLocal() error {
-	pc.context.Debugln("printerConnection: connecting local...")
+	pc.context.Debugf("printerConnection: connecting local (%s, %s)...\n", pc.config.IP, pc.config.Port)
 
 	err := pc.connection.ConnectLocal(pc.config.IP, pc.config.Port)
 	if err != nil {
 		return err
 	}
+
+	pc.context.Debugf("printerConnection: connected, authenticating (%s, %s)...\n", pc.config.IP, pc.config.Port)
 
 	err = pc.connection.AuthenticateWithThingiverse(pc.context.Config.ThingiverseToken, pc.context.Config.ThingiverseUsername)
 	if err != nil {
@@ -85,7 +89,7 @@ func (pc *printerConnection) connectLocal() error {
 	}
 
 	pc.Connected = true
-	pc.context.Debugln("printerConnection: connected!")
+	pc.context.Debugf("printerConnection: connected to %s!\n", pc.connection.Printer.MachineName)
 	return nil
 }
 
@@ -104,7 +108,10 @@ func (pc *printerConnection) connectRemote() error {
 
 func (pc *printerConnection) Connect() error {
 	pc.context.Debugln("printerConnection: Connect() called...")
+
 	cl := makerbot.NewClient()
+	cl.Timeout = 10 * time.Second
+
 	cl.HandleDisconnect(pc.handleDisconnect)
 
 	pc.connection = &cl

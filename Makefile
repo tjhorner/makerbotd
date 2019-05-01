@@ -1,4 +1,4 @@
-.PHONY: dist dist-win dist-macos dist-linux ensure-dist-dir build install uninstall
+.PHONY: dist dist-win dist-macos dist-linux-amd64 dist-linux-arm ensure-dist-dir build install uninstall
 
 GOBUILD=go build -ldflags="-s -w"
 INSTALLPATH=/usr/local/bin
@@ -14,11 +14,15 @@ dist-macos: ensure-dist-dir
 	# Build for macOS x64
 	GOOS=darwin GOARCH=amd64 $(GOBUILD) -o dist/makerbotd-darwin-amd64 *.go
 
-dist-linux: ensure-dist-dir
+dist-linux-amd64: ensure-dist-dir
 	# Build for Linux x64
 	GOOS=linux GOARCH=amd64 $(GOBUILD) -o dist/makerbotd-linux-amd64 *.go
 
-dist: dist-win dist-macos dist-linux
+dist-linux-arm: ensure-dist-dir
+	# Build for Linux ARM
+	GOOS=linux GOARCH=arm $(GOBUILD) -o dist/makerbotd-linux-arm *.go
+
+dist: dist-win dist-macos dist-linux-amd64 dist-linux-arm
 
 build:
 	@- mkdir -p bin
