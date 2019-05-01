@@ -42,7 +42,7 @@ func (a *APIv1) Route(router *httprouter.Router) {
 
 	router.GET(prefix+"printers", a.getPrinters)
 	router.GET(prefix+"printers/:id", a.getPrinter)
-	router.GET(prefix+"printers/:id/snapshot.png", a.getPrinterSnapshot)
+	router.GET(prefix+"printers/:id/snapshot.jpg", a.getPrinterSnapshot)
 	router.GET(prefix+"printers/:id/current_job", a.getPrinterCurrentJob)
 	router.POST(prefix+"printers/:id/current_job/suspend", a.postPrinterCurrentJobSuspend)
 	router.POST(prefix+"printers/:id/current_job/resume", a.postPrinterCurrentJobResume)

@@ -139,7 +139,7 @@ func (c *Client) GetPrinter(id string) (*makerbot.Printer, error) {
 
 // GetPrinterSnapshot gets a single frame from the printer's camera
 func (c *Client) GetPrinterSnapshot(id string) (*[]byte, error) {
-	req, err := http.NewRequest("GET", c.url("/api/v1/printers/"+id+"/snapshot.png"), nil)
+	req, err := http.NewRequest("GET", c.url("/api/v1/printers/"+id+"/snapshot.jpg"), nil)
 	if err != nil {
 		return nil, err
 	}

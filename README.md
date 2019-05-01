@@ -2,7 +2,46 @@
 
 makerbotd is a daemon that manages connections to MakerBot 3D printers. With it, you can control your printers with simple HTTP API calls.
 
-**This software is mid-development. It is not stable yet.**
+**This software is mid-development. It is not stable yet.** That said, feel free to play around with it!
+
+## Examples
+
+Here are some examples of what makerbotd can do.
+
+Send `GET /api/v1/printers`, get a list of connected printers back:
+
+```json
+{
+    "result": [
+        {
+            "machine_type": "platypus",
+            "vid": 9153,
+            "ip": "10.65.1.99",
+            "pid": 5,
+            "api_version": "1.9.0",
+            "iserial": "23C100053C7059018291",
+            "ssl_port": "12309",
+            "machine_name": "Kevin",
+            "motor_driver_version": "4.6",
+            "bot_type": "replicator_5",
+            "port": "9999",
+            "firmware_version": {
+                "major": 2,
+                "minor": 6,
+                "bugfix": 1,
+                "build": 724
+            }
+        }
+    ],
+    "error": null
+}
+```
+
+Send a print file to the printer with `POST /api/v1/printers/23C100053C7059018291/prints`.
+
+Grab a snapshot from the printer's camera with `GET /api/v1/printers/23C100053C7059018291/snapshot.jpg`:
+
+![](https://user-images.githubusercontent.com/2646487/57029732-71b08a00-6bf7-11e9-90ad-3f3339c0d181.png)
 
 ## Setup
 
