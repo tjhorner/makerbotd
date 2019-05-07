@@ -44,12 +44,18 @@ func (a *APIv1) Route(router *httprouter.Router) {
 	router.GET(prefix+"printers/:id", a.getPrinter)
 	router.GET(prefix+"printers/:id/snapshot.jpg", a.getPrinterSnapshot)
 	router.GET(prefix+"printers/:id/current_job", a.getPrinterCurrentJob)
-	router.POST(prefix+"printers/:id/current_job/suspend", a.postPrinterCurrentJobSuspend)
-	router.POST(prefix+"printers/:id/current_job/resume", a.postPrinterCurrentJobResume)
-	router.DELETE(prefix+"printers/:id/current_job", a.deletePrinterCurrentJob)
-	router.POST(prefix+"printers/:id/prints", a.postPrinterPrints)
-	router.POST(prefix+"printers/:id/unload_filament/:tool_index", a.postPrinterUnloadFilament)
-	router.POST(prefix+"printers/:id/load_filament/:tool_index", a.postPrinterLoadFilament)
+
+	// TODO: Handle this somewhere else so it returns the proper HTTP status code
+	// instead of just a 404
+	if !a.context.Config.ReadOnly {
+		// Endpoints that will result in a mutation
+		router.POST(prefix+"printers/:id/current_job/suspend", a.postPrinterCurrentJobSuspend)
+		router.POST(prefix+"printers/:id/current_job/resume", a.postPrinterCurrentJobResume)
+		router.DELETE(prefix+"printers/:id/current_job", a.deletePrinterCurrentJob)
+		router.POST(prefix+"printers/:id/prints", a.postPrinterPrints)
+		router.POST(prefix+"printers/:id/unload_filament/:tool_index", a.postPrinterUnloadFilament)
+		router.POST(prefix+"printers/:id/load_filament/:tool_index", a.postPrinterLoadFilament)
+	}
 }
 
 func (a *APIv1) notFound(w http.ResponseWriter, r *http.Request) {

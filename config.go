@@ -28,6 +28,7 @@ type config struct {
 	ListenTCP           bool            // ListenTCP defines whether or not makerbotd will listen on a TCP port
 	ListenTCPAddress    string          // ListenTCPPort defines the TCP port to listen on if ListenTCP is true
 	AutoAddPrinters     bool            // AutoAddPrinters defines whether or not printers should automatically be added from the authenticated Thingiverse account (DOES NOTHING RIGHT NOW)
+	ReadOnly            bool            // ReadOnly makes the API exposed by makerbotd read-only, e.g. print jobs cannot be sent, cancelled, etc. This is useful if you are publicly exposing the makerbotd API.
 	Printers            []printerConfig // Printers is the list of MakerBot printers that will automatically be connected when makerbotd starts
 }
 
@@ -38,7 +39,8 @@ func writeDefaultConfig(path string) (*config, error) {
 		ListenSocket:     true,
 		ListenSocketPath: "/var/run/makerbot.socket",
 		ListenTCP:        false,
-		ListenTCPAddress: ":6969", // har har
+		ListenTCPAddress: ":6969", // nice
+		ReadOnly:         false,
 		Printers:         []printerConfig{},
 	}
 
