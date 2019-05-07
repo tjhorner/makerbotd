@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"net/http/pprof"
 	"runtime"
 
 	"github.com/julienschmidt/httprouter"
@@ -35,7 +36,20 @@ func stats(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 func getRouter(ctx *mbContext) *httprouter.Router {
 	router := httprouter.New()
 
-	router.GET("/_/stats", stats)
+	if ctx.Config.Debug {
+		router.GET("/_/stats", stats)
+
+		router.HandlerFunc("GET", "/debug/pprof/", pprof.Index)
+		router.HandlerFunc("GET", "/debug/pprof/cmdline", pprof.Cmdline)
+		router.HandlerFunc("GET", "/debug/pprof/profile", pprof.Profile)
+		router.HandlerFunc("GET", "/debug/pprof/symbol", pprof.Symbol)
+
+		router.Handler("GET", "/debug/pprof/allocs", pprof.Handler("allocs"))
+		router.Handler("GET", "/debug/pprof/goroutine", pprof.Handler("goroutine"))
+		router.Handler("GET", "/debug/pprof/heap", pprof.Handler("heap"))
+		router.Handler("GET", "/debug/pprof/threadcreate", pprof.Handler("threadcreate"))
+		router.Handler("GET", "/debug/pprof/block", pprof.Handler("block"))
+	}
 
 	v1 := APIv1{ctx}
 	v1.Route(router)

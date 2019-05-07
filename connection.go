@@ -65,7 +65,7 @@ func newPrinterConnection(context *mbContext, conf printerConfig) *printerConnec
 }
 
 func (pc *printerConnection) handleDisconnect() {
-	pc.context.Debugf("printerConnection: disconnected (%s)! attempting reconnect in 10s...\n", pc.connection.Printer.MachineName)
+	pc.context.Debugln("printerConnection: disconnected! attempting reconnect in 10s...")
 	pc.Connected = false
 	pc.connection = nil
 
