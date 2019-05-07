@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/user"
 	"sync"
+	"time"
 )
 
 type mbContext struct {
@@ -61,7 +62,10 @@ func main() {
 
 	router := getRouter(&ctx)
 
-	server := http.Server{Handler: router}
+	server := http.Server{
+		Handler:     router,
+		ReadTimeout: 5 * time.Minute,
+	}
 
 	var wg sync.WaitGroup
 

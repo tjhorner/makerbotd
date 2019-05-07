@@ -51,6 +51,7 @@ func (a *APIv1) Route(router *httprouter.Router) {
 		// Endpoints that will result in a mutation
 		router.POST(prefix+"printers/:id/current_job/suspend", a.postPrinterCurrentJobSuspend)
 		router.POST(prefix+"printers/:id/current_job/resume", a.postPrinterCurrentJobResume)
+		router.POST(prefix+"printers/:id/current_job/process_method/:method", a.deletePrinterCurrentJob)
 		router.DELETE(prefix+"printers/:id/current_job", a.deletePrinterCurrentJob)
 		router.POST(prefix+"printers/:id/prints", a.postPrinterPrints)
 		router.POST(prefix+"printers/:id/unload_filament/:tool_index", a.postPrinterUnloadFilament)
@@ -170,6 +171,26 @@ func (a *APIv1) postPrinterCurrentJobResume(w http.ResponseWriter, r *http.Reque
 	enc.Encode(apiSuccess(true))
 }
 
+func (a *APIv1) postPrinterCurrentJobMethod(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+
+	printer, ok := a.context.Printers.Find(params.ByName("id"))
+	if !ok {
+		a.notFound(w, r)
+		return
+	}
+
+	enc := json.NewEncoder(w)
+
+	_, err := printer.connection.ProcessMethod(params.ByName("method"))
+	if err != nil {
+		enc.Encode(apiError(err))
+		return
+	}
+
+	enc.Encode(apiSuccess(true))
+}
+
 func (a *APIv1) deletePrinterCurrentJob(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -199,7 +220,11 @@ func (a *APIv1) postPrinterPrints(w http.ResponseWriter, r *http.Request, params
 		return
 	}
 
-	r.ParseMultipartForm(52428800)
+	err := r.ParseMultipartForm(52428800)
+	if err != nil {
+		a.internalError(w, r)
+		return
+	}
 
 	file, meta, err := r.FormFile("printfile")
 	if err != nil {
