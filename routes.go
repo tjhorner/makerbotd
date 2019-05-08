@@ -14,6 +14,7 @@ type statsResponse struct {
 	NumCPU           int
 	AllocMemory      uint64
 	TotalAllocMemory uint64
+	SysMemory        uint64
 }
 
 func stats(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -27,6 +28,7 @@ func stats(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		NumCPU:           runtime.NumCPU(),
 		AllocMemory:      ms.Alloc,
 		TotalAllocMemory: ms.TotalAlloc,
+		SysMemory:        ms.Sys,
 	}
 
 	enc := json.NewEncoder(w)
